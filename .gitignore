@@ -1,0 +1,26 @@
+# ignore les fichiers et dossiers
+
+
+
+*.orig
+*.bak
+*.BAK
+*.tmp
+*.TMP
+*.sw*
+*.old
+*.pyc
+*.sqlite
+*.sqlite3
+!demo.sqlite3
+*.DS_Store
+npm-debug.log
+Thumbs.db
+.sass-cache
+__pycache__
+.coverage
+pylint.txt
+package-lock.json
+
+venv/
+__pycache__
