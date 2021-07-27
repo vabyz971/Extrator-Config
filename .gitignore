@@ -1,7 +1,4 @@
 # ignore les fichiers et dossiers
-
-
-
 *.orig
 *.bak
 *.BAK
@@ -16,11 +13,11 @@
 *.DS_Store
 npm-debug.log
 Thumbs.db
+.idea
+.vscode
 .sass-cache
 __pycache__
 .coverage
 pylint.txt
 package-lock.json
-
-venv/
-__pycache__
+venv

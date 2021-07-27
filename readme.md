@@ -1,6 +1,7 @@
 # Extractor Config Server and workstation
 
 ## install dependance
+Python => 3.6 
 
 ``pip install -r requirements.txt``
 
