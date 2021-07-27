@@ -1,9 +1,14 @@
 {
     "START": "Extracteur de config serveur / workstation ",
-    "BASE": {
+    "SYSTEM": {
+        "parameter":"Paramètre",
+        "option": "Option",
         "valide": "valider",
-        "delete": "suprimmer",
-        "detected": "detecter"
+        "applicate": "Appliquer",
+        "delete": "Suprimmer",
+        "detected": "detecter",
+        "about": "À propos",
+        "exit":"Quitter"
     },
     "INPUT": {
         "choise_benchmarck": "utiliser le Benchmarck par défault y/n: ",
@@ -15,5 +20,9 @@
     },
     "INDEX": {
         "SYSTEM": "system"
-    }
+    },
+    "mode_dark":"mode sombre",
+    "dark": "sombre",
+    "mode_light":"mode claire",
+    "light": "blanc"
 }
