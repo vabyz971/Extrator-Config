@@ -2,7 +2,7 @@ import tkinter as tk
 import os
 import json
 
-from Views.Widget import NavBar, DisclaimerPage, SettingPage, BaseWindow
+from Views.Widget import NavBar, DisclaimerPage, SettingPage
 from Views.HomePage import MainPage
 
 
@@ -28,7 +28,7 @@ class Application(tk.Tk):
         pages = (MainPage,)  # TODO Liste des Pages
 
         for page in pages:
-            frame = page(parent=main_frame)
+            frame = page(parent=main_frame, setting=self.SETTING)
             self.frames[page] = frame
             frame.place(rely=0, relx=0)
 
@@ -39,6 +39,11 @@ class Application(tk.Tk):
         frame = self.frames[frame_name]
         frame.tkraise()
 
+    def ChangeLanguageAndTheme(self, args={}):
+        """Récuper un tableau d'argument pour l'envoie a la class setting"""
+        if args is not None:
+            setting.ChangeSetting(args)
+
     def OpenSettingPage(self):
         SettingPage(parent=self)
 
@@ -47,6 +52,7 @@ class Application(tk.Tk):
 
 
 class Setting():
+    """Class qui stock l'ensemble des paramètre du fichier setting.json"""
 
     def __init__(self):
         self.APP = []
@@ -79,9 +85,23 @@ class Setting():
 
     def InitLanguages(self):
         """Chargement du language dans le fichier setting.json"""
-        with open(os.path.join('lang',self.APP['LANG']+ ".json"), 'r', encoding='utf8') as lang:
+        with open(os.path.join('lang', self.APP['LANG'] + ".json"), 'r', encoding='utf8') as lang:
             data = json.load(lang)
             self.LANG = data
+
+    def ChangeSetting(self, args={}):
+        data = []
+
+        #Récuper tout le fichier setting.json pour le stocké dans data
+        with open(os.path.join('setting.json'), 'r', encoding='utf8')as r_file:
+            data = json.load(r_file)
+            data["APP"]["LANG"] = args['LANG']
+            data["GUI"]["MODE_DARK"] = args['MODE_DARK']
+
+        #Réécrie les donnéés avant de les sauvegarders
+        with open(os.path.join('setting.json'), 'w') as w_file:
+            json.dump(data, w_file)
+            self.InitLanguages()
 
 
 if __name__ == "__main__":

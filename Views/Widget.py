@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import *
-
+from tkinter import messagebox
 
 class NavBar(tk.Menu):
     """ Barre de Navigation 
@@ -11,14 +11,15 @@ class NavBar(tk.Menu):
 
         # Option
         menu_option = tk.Menu(self, tearoff=0)
-        self.add_cascade(label=parent.SETTING.LANG['SYSTEM']['parameter'], menu=menu_option)
+        self.add_cascade(
+            label=parent.SETTING.LANG['SYSTEM']['parameter'], menu=menu_option)
         menu_option.add_command(
             label=parent.SETTING.LANG['SYSTEM']['option'], command=parent.OpenSettingPage)
         menu_option.add_command(
             label=parent.SETTING.LANG['SYSTEM']['about'], command=parent.OpenDisclaimerPage)
         menu_option.add_separator()
-        menu_option.add_command(label=parent.SETTING.LANG['SYSTEM']['exit'], command=parent.quit)
-
+        menu_option.add_command(
+            label=parent.SETTING.LANG['SYSTEM']['exit'], command=parent.quit)
 
 class BaseWindow(tk.Toplevel):
     """
@@ -35,60 +36,85 @@ class BaseWindow(tk.Toplevel):
         self.geometry("600x200")
         self.resizable(0, 0)
 
-
 class SettingPage(BaseWindow):
     """ Page des Options de l'application 
     """
 
     def __init__(self, parent):
         super().__init__()
+        self.parent = parent
+        self.geometry("250x200")
         self.title(parent.SETTING.LANG['SYSTEM']['option'])
+
+        #Contener padding
+        self.base_frame.pack(padx=5, pady=20)
 
         # Language
         label_language = Label(
-            self.base_frame, text="Language:", font=('Arial', 10), width=12)
+            self.base_frame, text=parent.SETTING.LANG['SYSTEM']['language'] + ':', font=('Arial', 10), width=10)
         label_language.grid(row=0, column=0)
 
+        #Récuper la string dans le tableau language
         self.drop_language_Var = StringVar()
-        self.drop_language_Var.set("Français")
+        self.drop_language_Var.set(parent.SETTING.APP['LANG'])
+
+        #List des languages dans le fichier lang
+        language = ["fr_FR", "en_EN"]
+
+        #Selection de la langue et la stock dans (drop_language_Var)
         drop_language = OptionMenu(
-            self.base_frame, self.drop_language_Var, 'Français', 'Anglais')
+            self.base_frame, self.drop_language_Var, *language)
         drop_language.grid(row=0, column=1)
 
         # Theme App
         label_theme = Label(self.base_frame, text="Theme:",
-                            font=("Arial", 10), width=12)
+                            font=("Arial", 10), width=10)
         label_theme.grid(row=1, column=0)
 
-        self.drop_theme_Var = StringVar()
-        self.drop_theme_Var.set('Light')
+        self.check_theme_Var = IntVar()
+        self.check_theme_Var.set(parent.SETTING.GUI['MODE_DARK'])
 
-        drop_theme = OptionMenu(
-            self.base_frame, self.drop_theme_Var, 'Light', 'Dark')
-        drop_theme.grid(row=1, column=1)
+
+        check_theme = Checkbutton(self.base_frame, text=parent.SETTING.LANG['mode_dark'], variable=self.check_theme_Var)
+        check_theme.grid(row=1, column=1)
 
         # Btn Submit
         btn_valide_theme = Button(
-            self.base_frame, text="Appliquer", command=self.SubmitChangeValue)
-        btn_valide_theme.grid(row=1, column=2)
+            self.base_frame, text="Appliquer", command=self.CommitDataSetting)
+        btn_valide_theme.grid(row=3, column=1)
 
-    def SubmitChangeValue(self):
-        pass
+    def CommitDataSetting(self):
+        data = {
+                "LANG":self.drop_language_Var.get(),
+                "MODE_DARK":self.check_theme_Var.get()}
 
+        self.parent.ChangeLanguageAndTheme(data)
+        messagebox.showinfo(title=self.parent.SETTING.LANG["INDEX"]["system"],
+                            message=self.parent.SETTING.LANG["WARNING"]["warning"],
+                            detail=self.parent.SETTING.LANG["WARNING"]["restart_application_applique_change"]
+                            )
 
 class DisclaimerPage(BaseWindow):
     """ Page du à propos
     """
-
     def __init__(self, parent):
         super().__init__()
         self.title(parent.SETTING.LANG['SYSTEM']['about'])
-        self.geometry("300x300")
-        summer = 'bla bla'
-        frame_disc = tk.LabelFrame(self.base_frame, text='disclaime')
-        frame_disc.pack(expand=True, fill="both")
-        label_disc = tk.Label(frame_disc, text=summer, font=self.fonts)
-        label_disc.pack(expand=True)
+        self.geometry("400x200")
+        label_title = Label(self.base_frame, text=parent.SETTING.LANG["START"], font=('Arial Bold', 11))
+        label_title.grid(row=0, column=0, columnspan=2, pady=15, padx=50)
 
-        label_version = Label(frame_disc, text="version:0.1.2", font=('', 8))
-        label_version.pack()
+        label_createBy = Label(self.base_frame, text="Create by:")
+        label_createBy.grid(row=1, column=0)
+        label_author = Label(self.base_frame, text=parent.SETTING.APP["AUTHOR"]["NAME"])
+        label_author.grid(row=1, column=1)
+
+        label_email = Label(self.base_frame, text="Email:")
+        label_email.grid(row=2, column=0)
+        label_author_email = Label(self.base_frame, text=parent.SETTING.APP["AUTHOR"]["EMAIL"])
+        label_author_email.grid(row=2, column=1)
+
+        label_version = Label(self.base_frame, text="version:")
+        label_version.grid(row=3, column=0)
+        label_version_current = Label(self.base_frame, text=parent.SETTING.APP['VERSION'])
+        label_version_current.grid(row=3, column=1)

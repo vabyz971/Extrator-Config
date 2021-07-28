@@ -8,19 +8,25 @@
         "delete": "Suprimmer",
         "detected": "detecter",
         "about": "À propos",
+        "language": "Langue",
         "exit":"Quitter"
     },
     "INPUT": {
         "choise_benchmarck": "utiliser le Benchmarck par défault y/n: ",
         "enter_number" : "Entre le numéro: "
     },
+    "WARNING": {
+        "warning":"Attention !",
+        "restart_application_applique_change": "Vous devez redémarrer l'application pour prendre en charge les changements"
+    },
     "ERROR": {
         "no_charge_sytem": "votre system  {} {} n'est pas pris en charge, contacter un des développeurs !",
         "no_benchmarck_system" : "Nous avons pas de CIS Benchmarck pour votre system {} {} ❌"
     },
     "INDEX": {
-        "SYSTEM": "system"
+        "system": "system"
     },
+    "system_detected": "System {} détecter",
     "mode_dark":"mode sombre",
     "dark": "sombre",
     "mode_light":"mode claire",
