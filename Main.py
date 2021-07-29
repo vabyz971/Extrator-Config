@@ -1,3 +1,5 @@
+import locale
+import platform
 import tkinter as tk
 import os
 import json
@@ -62,6 +64,7 @@ class Setting():
         self.LANG = []
 
         self.InitSettings()
+        self.InitLanguages()
 
     def InitSettings(self):
         """Chargement du fichier setting.json"""
@@ -71,16 +74,16 @@ class Setting():
             self.GUI = data['GUI']
             self.MODE_DARK = data['GUI']['MODE_DARK']
 
-            # check le dark mode dans le fichier setting.json
+            # check le dark mode si il est Activer dans le fichier setting.json
             if self.MODE_DARK == 1:
                 self.THEME = data['GUI']['THEME_DARK']
             else:
                 self.THEME = data['GUI']['THEME_LIGHT']
 
-            if self.APP['LANG']:
-                self.InitLanguages()
-            else:
-                print("Folder is not exist")
+            if self.APP["AUTO_LANG"] == 1 and platform.system() == "Windows":
+                self.APP["LANG"] = locale.getdefaultlocale()[0]
+            elif self.APP["AUTO_LANG"] == 1 and platform.system() == "Linux":
+                self.APP["LANG"] = os.getenv('LANG')
 
 
     def InitLanguages(self):
@@ -95,13 +98,18 @@ class Setting():
         #Récuper tout le fichier setting.json pour le stocké dans data
         with open(os.path.join('setting.json'), 'r', encoding='utf8')as r_file:
             data = json.load(r_file)
-            data["APP"]["LANG"] = args['LANG']
-            data["GUI"]["MODE_DARK"] = args['MODE_DARK']
 
         #Réécrie les donnéés avant de les sauvegarders
         with open(os.path.join('setting.json'), 'w') as w_file:
-            json.dump(data, w_file)
-            self.InitLanguages()
+            try:
+                data["APP"]["LANG"] = args["LANG"]
+                data["APP"]["AUTO_LANG"] = args["AUTO_LANG"]
+                data["GUI"]["MODE_DARK"] = args["MODE_DARK"]
+
+                json.dump(data, w_file)
+            except print(0):
+                print("File Setting no save")
+
 
 
 if __name__ == "__main__":

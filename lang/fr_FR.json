@@ -16,16 +16,22 @@
         "enter_number" : "Entre le numéro: "
     },
     "WARNING": {
-        "warning":"Attention !",
-        "restart_application_applique_change": "Vous devez redémarrer l'application pour prendre en charge les changements"
+        "warning": "Attention",
+        "information": "Information",
+        "restart_application_change": "Vous devez redémarrer l'application pour prendre en charge les changements",
+        "is_detect_scrip_auto_start": "Nous avons détecter que votre system est pris en charge, voulez vous lancé l'audit automatiquement?"
     },
     "ERROR": {
+        "error": "Erreur",
         "no_charge_sytem": "votre system  {} {} n'est pas pris en charge, contacter un des développeurs !",
-        "no_benchmarck_system" : "Nous avons pas de CIS Benchmarck pour votre system {} {} ❌"
+        "no_benchmarck_system" : "Nous avons pas de CIS Benchmarck pour votre system {} {} ❌",
+        "no_support_platform": "Votre system n'est pas supporter !"
     },
     "INDEX": {
         "system": "system"
     },
+    "active_detected_language": "Détection du langage system",
+    "info_platform" : "Information sur la platform",
     "system_detected": "System {} détecter",
     "mode_dark":"mode sombre",
     "dark": "sombre",

@@ -43,7 +43,7 @@ class SettingPage(BaseWindow):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
-        self.geometry("250x200")
+        self.geometry("400x200")
         self.title(parent.SETTING.LANG['SYSTEM']['option'])
 
         #Contener padding
@@ -53,6 +53,13 @@ class SettingPage(BaseWindow):
         label_language = Label(
             self.base_frame, text=parent.SETTING.LANG['SYSTEM']['language'] + ':', font=('Arial', 10), width=10)
         label_language.grid(row=0, column=0)
+
+        # CheckBox Auto Language System
+        self.check_langAuto_Var = IntVar()
+        self.check_langAuto_Var.set(parent.SETTING.APP['AUTO_LANG'])
+        check_langAuto = Checkbutton(self.base_frame, text=parent.SETTING.LANG['active_detected_language'],
+                                     variable=self.check_langAuto_Var)
+        check_langAuto.grid(row=0, column=2)
 
         #Récuper la string dans le tableau language
         self.drop_language_Var = StringVar()
@@ -71,10 +78,9 @@ class SettingPage(BaseWindow):
                             font=("Arial", 10), width=10)
         label_theme.grid(row=1, column=0)
 
+        # Checkbox Theme dark
         self.check_theme_Var = IntVar()
         self.check_theme_Var.set(parent.SETTING.GUI['MODE_DARK'])
-
-
         check_theme = Checkbutton(self.base_frame, text=parent.SETTING.LANG['mode_dark'], variable=self.check_theme_Var)
         check_theme.grid(row=1, column=1)
 
@@ -86,12 +92,13 @@ class SettingPage(BaseWindow):
     def CommitDataSetting(self):
         data = {
                 "LANG":self.drop_language_Var.get(),
-                "MODE_DARK":self.check_theme_Var.get()}
+                "MODE_DARK":self.check_theme_Var.get(),
+                "AUTO_LANG": self.check_langAuto_Var.get()}
 
         self.parent.ChangeLanguageAndTheme(data)
         messagebox.showinfo(title=self.parent.SETTING.LANG["INDEX"]["system"],
                             message=self.parent.SETTING.LANG["WARNING"]["warning"],
-                            detail=self.parent.SETTING.LANG["WARNING"]["restart_application_applique_change"]
+                            detail=self.parent.SETTING.LANG["WARNING"]["restart_application_change"]
                             )
 
 class DisclaimerPage(BaseWindow):
