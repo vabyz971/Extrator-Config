@@ -1,5 +1,8 @@
 # Extractor Config Server and workstation
 
+Extract Config est une application qui est basé sur les CIS Benchmark. 
+L'application remonte tout les informations relative au document CIS selon la platform ou est exécuter l'application. Grace à cela nous pouvons faire des audits sur les différends module de configuration sur un serveur ou un poste.
+
 ## install dependance
 
 ``pip install -r requirements.txt``

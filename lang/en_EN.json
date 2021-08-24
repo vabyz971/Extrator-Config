@@ -1,0 +1,22 @@
+{
+  "START": "Extractor of config server / workstation ",
+    "SYSTEM": {
+        "parameter":"Parameter",
+        "option": "Option",
+        "valide": "valider",
+        "applicate": "Applicate",
+        "delete": "Delete",
+        "detected": "Detected",
+        "about": "About",
+        "language": "Language",
+        "exit":"Exit"
+    },
+  "ERROR": {
+        "no_charge_sytem": "votre system  {} {} n'est pas pris en charge, contacter un des développeurs !",
+        "no_benchmarck_system" : "Nous avons pas de CIS Benchmarck pour votre system {} {} ❌"
+    },
+    "INPUT": {
+        "choise_benchmarck": "Use Benchmarck is default y/n: ",
+        "enter_number" : "Enter the number: "
+    }
+}

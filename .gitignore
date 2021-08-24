@@ -22,5 +22,8 @@ __pycache__
 pylint.txt
 package-lock.json
 
+#Config IDE
+.vscode
+.idea
 venv/
 __pycache__

@@ -7,39 +7,26 @@
 
 
 
-import platform, json
+import platform
 import os
 import re
 import subprocess
 import locale
 
 from tools import Mylib
+import i18n
+
 
 class Application():
 
     filesOS = []
-    i18n = {}
+    i18n = i18n.returnLanguageSystem()
 
     def Initialisation(self):
-        
-        #Initialisation du language en premier
-        self.DetectionLanguages()
 
         print("*"*5, self.i18n['START'] , "*"*5)
         self.DetectionSysteme()
 
-    def DetectionLanguages(self):
-        """Détection de la langue du system"""
-        
-
-        if platform.system() == "Linux":
-            f = open(os.path.join('lang',os.getenv('LANG') + ".json"), 'r', encoding='utf8')
-
-        elif platform.system() == "Windows":
-            f = open(os.path.join('lang',locale.getdefaultlocale()[0] + ".json"), 'r', encoding='utf8')
-            
-        self.i18n = json.loads(f.read())
-            
     def DetectionSysteme(self):
         """Détection du system Host et lance le script approprier """
 
