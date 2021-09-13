@@ -22,6 +22,8 @@ __pycache__
 pylint.txt
 package-lock.json
 
+AuditGenerate/*
+CIS/Windows/output/*
 #Config IDE
 .vscode
 .idea

@@ -77,7 +77,7 @@ class Application():
             
             for n,f in enumerate(self.filesOS):
                 if(re.search(platform.win32_ver()[0], f)):
-                    subprocess.run(['python',f])
+                    subprocess.Popen(['powershell',f])
                 else:
                     print(str(self.i18n['ERROR']['no_benchmarck_system']).format(platform.system(), platform.release()))
 
@@ -86,7 +86,7 @@ class Application():
                 print(n, ":", f)
 
             choixBench = int(input(self.i18n['INPUT']['enter_number']))
-            subprocess.run(['python', self.filesOS[choixBench]])
+            subprocess.Popen(['powershell', self.filesOS[choixBench]])
 
     def ListFileSystemOS(self):
         """Liste tout le repertoire lier a la platform (Linux/ Windows)
