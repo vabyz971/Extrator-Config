@@ -333,7 +333,7 @@ Write-Host "[1] - Authentication"
 
 # List of local users 
 
-updateLogFile $authentificationFileName ("--=== List of local users ===--")
+# updateLogFile $authentificationFileName ("--=== List of local users ===--")
 
 Try { 
 	$colItems = Get-WMIObject Win32_UserAccount -NameSpace "root\CIMV2" -Filter "LocalAccount='$True'" -ErrorAction SilentlyContinue 
@@ -526,11 +526,9 @@ Catch {
 Write-Host "[2] - Network access controls"
 
 
-updateLogFile $networkFileName ("===== [2] - Network access controls - Start =====")
-
+# updateLogFile $networkFileName ("===== [2] - Network access controls - Start =====")
 
 # Network interfaces
-
 
 updateLogFile $networkFileName ("--=== Network interfaces ===--")
 
@@ -754,7 +752,7 @@ Catch {
 
 Write-Host "[3] - System access controls"
 
-updateLogFile $systemFileName ("===== [3] - System access controls - Start =====")
+# updateLogFile $systemFileName ("===== [3] - System access controls - Start =====")
 
 # AppLocker events logs
 
@@ -817,7 +815,7 @@ Catch {
 
 Write-Host "[4] - Encryption"
 
-updateLogFile $encryptionFileName ("===== [4] - Encryption - Start =====")
+# updateLogFile $encryptionFileName ("===== [4] - Encryption - Start =====")
 
 # Certstore parameters
 
@@ -843,7 +841,12 @@ updateLogFile $encryptionFileName ("--=== BitLocker status ===--")
 
 Try {
 	$file = New-Item $global:tempFileName -Type File -Force
-	manage-bde -status >> $file
+	
+	If (manage-bde){
+		manage-bde -status >> $file
+	}Else{
+		Write-Host "[-] BitLocker status: No Activate" -ForegroundColor Red
+	}
 	
 	If ($?) {
 		ForEach ($system in Get-Content $file)
