@@ -2,7 +2,6 @@
 import os
 import subprocess
 
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -15,16 +14,19 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
     def pSuccess(self, message):
-        print(f'{self.OKGREEN}{message}{self.ENDC}')
+        print(f'{self.OKGREEN}[ OK ] - {message}{self.ENDC}')
 
     def pFailure(self, message):
-        print(f'{self.FAIL}{message}{self.ENDC}')
+        print(f'{self.FAIL}[ FAIL ] - {message}{self.ENDC}')
 
     def pWarning(self, message):
-        print(f'{self.WARNING}{message}{self.ENDC}')
+        print(f'{self.WARNING}[ WARNING ] - {message}{self.ENDC}')
 
     def pHeader(self, message):
-        print(f'{self.HEADER}{self.BOLD}{message}{self.ENDC}')
+        print(f'{self.HEADER} === {self.BOLD}{message} === {self.ENDC}')
+    
+    def pBleu(self, message):
+        print(f'{self.OKBLUE} {message} {self.ENDC}')
 
 class CIS():
 
@@ -32,35 +34,37 @@ class CIS():
         self.Color = bcolors()
         self.Manifest()
         self.InitialSetup()
-        self.ConfigSoftwareUpdate()
-        self.NetworkConfigurations()
 
     def Manifest(self):
         self.name = "Benshmarck ubuntu"
         self.author = "Jahleel Lacascade"
         self.email = "jahleel.lacascade@caerus.com"
-        self.version = "0.1.1"
+        self.version = "0.10.1"
         self.url_CIS_benchmark = "https://learn.cisecurity.org/l/799323/2021-04-01/41hcb"
 
-        print("\n")
-        print("="*4, "Manifest", "="*3)
-        print("Name   ", ":", self.name)
-        print("Author ", ":", self.author)
-        print("Email  ", ":", self.email)
-        print("Version", ":", self.version)
+        self.Color.pHeader("="*5+ "Manifest" + "="*5)
+        self.Color.pBleu("Name   : " +self.name)
+        self.Color.pBleu("Author : " +self.author)
+        self.Color.pBleu("Email  : " +self.email)
+        self.Color.pBleu("Version: " +self.version)
         print("CIS Benshmarck", ":", self.url_CIS_benchmark)
 
     def InitialSetup(self):
         self.FilesystemConfiguration()
 
     def FilesystemConfiguration(self):
-        self.Ensure_Mounting_of_Module_Filesystem_is_disabled()
-        if(self.Ensure_tmp_is_Configured()):
-            self.Ensure_Module_Option_set_on_tmp_Partition()
-        if(self.Ensure_dev_shm_is_Configured()):
-            pass
+        self.Ensure_mounting_of_module_filesystem_is_disabled()
+        self.Ensure_tmp_is_configured()
+        self.Ensure_module_option_set_on_tmp_partition()
+        self.Ensure_dev_shm_is_configured()
+        self.Ensure_module_option_set_on_dev_shm_partition()
+        self.Disable_automounting()
+        self.Disable_usb_storage()
+        self.Ensure_package_manager_repositories_are_configured()
+        self.Ensure_GPG_keys_are_configured()
+        self.Ensure_AIDE_is_installed()
 
-    def Ensure_Mounting_of_Module_Filesystem_is_disabled(self):
+    def Ensure_mounting_of_module_filesystem_is_disabled(self):
         modules = ["cramfs","freevxfs","jffs2","hfs","hfsplus","udf"]
         self.Color.pHeader(f"Ensure mounting of {modules} filesystems is disabled")
 
@@ -102,19 +106,17 @@ class CIS():
                 else:
                     pass
 
-    def Ensure_tmp_is_Configured(self):
+    def Ensure_tmp_is_configured(self):
         #TODO: remediation tmp is configured
         self.Color.pHeader(f"Ensure /tmp is configured")
 
         command_findmnt = subprocess.run(['findmnt /tmp'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if(command_findmnt.stdout):
             self.Color.pSuccess(command_findmnt.stdout)
-            return True
         
         self.Color.pWarning("Partition /tmp no detecte")
-        return False
 
-    def Ensure_Module_Option_set_on_tmp_Partition(self):
+    def Ensure_module_option_set_on_tmp_partition(self):
         #TODO: finish the remediation module that uses /tmp
         modules = ["nodev","nosuid","noexec"]
 
@@ -124,42 +126,144 @@ class CIS():
                 if(command_findmnt.stdout):
                     self.Color.pSuccess(f"{module} is OK")
 
-    def Ensure_dev_shm_is_Configured(self):
-        pass
+    def Ensure_dev_shm_is_configured(self):
+        
+        #TODO: Add Parameter additional dev/shm Configured
 
-    def ConfigSoftwareUpdate(self):
-        self.ConfigGestionnairePaquets()
-        self.ConfigKeyGPG()
+        command_findmnt = subprocess.run("findmnt /dev/shm", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if(command_findmnt.returncode == 0):
+            self.Color.pSuccess("dev/shm Detecte")
+            print(command_findmnt.stdout)
+        else:
+            self.Color.pFailure(command_findmnt.stderr)
+        
+        self.Color.pWarning(f"[REMEDIATION] Ensure /dev/shm configured ")
+        isActive = int(input("1:yes | 0:no => "))
 
-    def ConfigGestionnairePaquets(self):
-        """ Verification de la configuration du gestionnaire de paquets 
+        if(isActive == 1):
+            File = os.path.isfile(f"/etc/fstab")
+            if(File):
+                with open(File,'a') as file:
+                    file.write("tmpfs   /dev/shm    tmpfs   defaults,noexec,nodev,nosuid,seclabel   0 0")
+                    file.close()
+                
+                command_mounter = subprocess.run("mount -o remount,noexec,nodev,nosuid /dev/shm",shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                if(command_mounter.returncode == 0):
+                    self.Color.pSuccess("dev/shm is mounted")
+                else:
+                    self.Color.pFailure(command_mounter.stderr)
+        else:
+            pass
 
-        * Niveau 1 : serveur
-        * Niveau 1 : Station de travail
-        """
-        print('\n', "*"*3, "Configuration du gestionnaire de paquets", "*"*3, '\n')
-        print(subprocess.getoutput('apt-cache policy'))
+    def Ensure_module_option_set_on_dev_shm_partition(self):
 
-    def ConfigKeyGPG(self):
-        """ Verification de la configuration des Key GPG 
+        modules = ["nodev","nosuid", "noexec"]
+        self.Color.pHeader(f"Ensure {modules} option set on /dev/shm partition")
 
-        * Niveau 1 : serveur
-        * Niveau 1 : Station de travail
-        """
-        print('\n', "*"*3, "Configuration des clés GPG", "*"*3, '\n')
-        print(subprocess.getoutput('apt-key list'))
+        for module in modules:
+            command_findmnt = subprocess.run([f"findmnt -n /dev/shm | grep -v {module}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if(command_findmnt.returncode == 0):
+                self.Color.pSuccess(module + " Verify")
+            else:
+                self.Color.pWarning(command_findmnt.stdout)
+                #TODO: Add Remediation option set on /dev/shm partition
 
-    def NetworkConfigurations(self):
-        self.DisableIPv6()
+    def Disable_automounting(self):
+        self.Color.pHeader("Disable Automounting")
 
-    def DisableIPv6(self):
-        """ Desactivation de IPv6
+        command_dpkg = subprocess.run("dpkg -s autofs", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if(command_dpkg.returncode == 1):
+            self.Color.pSuccess("Auto mounted is not install")
+        else:
+            self.Color.pWarning(f"[REMEDIATION] Disable Automounting Remove")
+            isActive = int(input("1:yes | 0:no => "))
+            if(isActive == 1):
+                command_purge_autofs = subprocess.run("apt purge autofs", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                if(command_purge_autofs.returncode == 0):
+                    self.Color.pSuccess("autofs is uninstall")
+            else:
+                pass
 
-        * Niveau 2 : serveur
-        * Niveau 2 : Station de travail
-        """
+    def Disable_usb_storage(self):
+        self.Color.pHeader("Disable USB Storage")
 
-        print(subprocess.getoutput('AddressFamily inet'))
+        command_modprobe = subprocess.run("modprobe -n -v usb-storage", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if(command_modprobe.returncode == 0):
+            self.Color.pSuccess("usb-storage Detected")
+        
+        if(command_modprobe.stdout.count == 0):
+            self.Color.pSuccess("lsmod usb-storage is Ok")
+        else:
+            self.Color.pWarning(f"[REMEDIATION] Disable USB Storage")
+            isActive = int(input("1:yes | 0:no => "))
+            if(isActive == 1):
+                usb_storageFile = os.path.isfile("/etc/modprobe.d/usb_storage.conf")
+                if(usb_storageFile):
+                    with open(usb_storageFile, 'a') as file:
+                        file.write("install usb-storage /bin/true")
+                        file.close()
+                        command_rmmod = subprocess.run("rmmod usb-storage", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        if(command_rmmod.returncode == 0):
+                            self.Color.pSuccess(command_rmmod.stdout)
+                else:
+                    with open(usb_storageFile, 'r') as file:
+                        file.write("install usb-storage /bin/true")
+                        file.close()
+                        command_rmmod = subprocess.run("rmmod usb-storage", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        if(command_rmmod.returncode == 0):
+                            self.Color.pSuccess(command_rmmod.stdout)
+            else:
+                pass
+
+    def Ensure_package_manager_repositories_are_configured(self):
+        self.Color.pHeader("Ensure package manager repositories are configured")
+
+        command_apt = subprocess.getoutput('apt-cache policy')
+        if(command_apt):
+            print(command_apt)
+    
+    def Ensure_GPG_keys_are_configured(self):
+        self.Color.pHeader("Ensure GPG keys are configured")
+
+        command_apt = subprocess.getoutput('apt-cache policy')
+        if(command_apt):
+            print(command_apt)
+
+    def Ensure_AIDE_is_installed(self):
+        self.Color.pHeader("Ensure AIDE is installed")
+        modules = ["aide","aide-common"]
+
+        isRemediation = False;
+
+        for module in modules:
+            command_dpkg = subprocess.run(f"dpkg -s {module} | grep -E '(Status:|not installed)'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if(command_dpkg.returncode == 0):
+                self.Color.pSuccess(f"{module} ok installed")
+                isRemediation = False
+            else:
+                self.Color.pWarning(f"{module} not installed")
+                isRemediation = True
+                break
+        
+        if(isRemediation):
+            self.Color.pWarning(f"[REMEDIATION] Ensure AIDE is installed")
+
+            isActive = input("1:yes | 0:no => ")
+            if(isActive == 1 or isActive == "yes" or isActive == "y"):
+                command_apt = subprocess.run("apt install aide aide-common", shell=True, stdout=subprocess.PIPE)
+                if(command_apt.returncode == 0):
+                    print(command_apt.stdout)
+                    command_aide = subprocess.run("aideinit", shell=True, stdout=subprocess.PIPE)
+                    if(command_aide.returncode == 0):
+                        mv = "mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db"
+                        command_mv = subprocess.run(mv)
+                        if(command_mv.returncode == 0):
+                            self.Color.pSuccess("Remediation Finis")
+                            isRemediation = False
+            else:
+                pass
+
+
 
 
 if __name__ == "__main__":
