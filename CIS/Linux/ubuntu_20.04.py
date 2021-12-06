@@ -39,7 +39,7 @@ class CIS():
         self.name = "Benshmarck ubuntu"
         self.author = "Jahleel Lacascade"
         self.email = "jahleel.lacascade@caerus.com"
-        self.version = "0.10.1"
+        self.version = "0.16.2" 
         self.url_CIS_benchmark = "https://learn.cisecurity.org/l/799323/2021-04-01/41hcb"
 
         self.Color.pHeader("="*5+ "Manifest" + "="*5)
@@ -63,23 +63,34 @@ class CIS():
         self.Ensure_package_manager_repositories_are_configured()
         self.Ensure_GPG_keys_are_configured()
         self.Ensure_AIDE_is_installed()
+        self.Ensure_filesystem_integrity_is_regularly_checked()
+        self.Ensure_filesystem_integrity_is_regularly_checked()
+        self.Ensure_permissions_bootloader_config_are_not_overridden()
+        self.Ensure_bootloader_password_is_set()
+        self.Ensure_permissions_on_bootloader_config_are_configured()
+        self.Ensure_authentication_required_for_single_user_mode()
 
     def Ensure_mounting_of_module_filesystem_is_disabled(self):
         modules = ["cramfs","freevxfs","jffs2","hfs","hfsplus","udf"]
         self.Color.pHeader(f"Ensure mounting of {modules} filesystems is disabled")
 
+        IsRemediation = False;
+
         for module in modules:
             command_modprobe = subprocess.run([f"modprobe -n -v {module} | grep -E '({module}|install)'",], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if(command_modprobe.returncode == 0):
                 self.Color.pSuccess(module + " Install")
-                print(command_modprobe.stdout)
+                IsRemediation = False;
+                
+                command_lsmod = subprocess.run(["lsmod | grep", module],  shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                if(command_lsmod.stdout is None):
+                    return
+
             else:
                 self.Color.pFailure(command_modprobe.stderr)
+                IsRemediation = True;
 
-            command_lsmod = subprocess.run(["lsmod | grep", module],  shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if(command_lsmod.stdout):
-                self.Color.pSuccess(module + " activate")
-            else:
+            if(IsRemediation):
                 self.Color.pWarning(f"[REMEDIATION] Ensure mounting of {module} filesystems is disabled ")
 
                 isActive = int(input("1:yes | 0:no => "))
@@ -120,11 +131,18 @@ class CIS():
         #TODO: finish the remediation module that uses /tmp
         modules = ["nodev","nosuid","noexec"]
 
+        IsRemediation = False
+
         for module in modules:
             command_findmnt = subprocess.run([f"findmnt -n /tmp | grep -v {module}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if(command_findmnt.returncode == 0):
                 if(command_findmnt.stdout):
                     self.Color.pSuccess(f"{module} is OK")
+                else:
+                    IsRemediation = True
+            
+            if(IsRemediation):
+                self.Color.pWarning(f"[REMEDIATION] Ensure {module} option set on /tmp partition")
 
     def Ensure_dev_shm_is_configured(self):
         
@@ -263,7 +281,57 @@ class CIS():
             else:
                 pass
 
+    def Ensure_filesystem_integrity_is_regularly_checked(self):
+        self.Color.pHeader("Ensure filesystem integrity is regularly checked")
+        isRemediation = False;
+        command_systemctl = subprocess.run("systemctl is-enabled aidecheck.service", shell=True , stdout=subprocess.PIPE)
 
+        if(command_systemctl.returncode != 0):
+            command_systemctl = subprocess.run("systemctl is-enabled aidecheck.timer", shell=True, stdout=subprocess.PIPE)
+            self.Color.pSuccess(command_systemctl.stdout)
+            command_systemctl = subprocess.run("systemctl status aidecheck.timer", shell=True, stdout=subprocess.PIPE)
+            self.Color.pSuccess(command_systemctl.stdout)
+        else:
+            isRemediation = True
+
+        if(isRemediation):
+            pass
+            #TODO: Remediation filesystem integrity is regularly checked no complete
+
+    def Ensure_permissions_bootloader_config_are_not_overridden(self):
+        pass
+        #TODO: Ensure permissions on bootloader config are not overridden
+
+    def Ensure_bootloader_password_is_set(self):
+        pass
+        #TODO: Ensure bootloader password is set
+
+    def Ensure_permissions_on_bootloader_config_are_configured(self):
+        pass
+        #TODO: Ensure permissions on bootloader config are configured
+
+    def Ensure_authentication_required_for_single_user_mode(self):
+        self.Color.pHeader("Ensure authentication required for single user mode")
+
+        command_grep = subprocess.run(["grep -Eq '^root:\$[0-9]' /etc/shadow || echo 'root is locked'"], shell=True, stdout=subprocess.PIPE)
+        
+        isRemediation = False
+
+        if(command_grep.returncode == 0):
+            self.Color.pSuccess("Password root")
+            isRemediation = False
+        else:
+            isActive = int(input("1:yes | 0:no => "))
+            if(isActive == 1):
+                isRemediation = True
+        
+        if(isRemediation):
+            command_passwd = subprocess.Popen("passwd root", shell=False,stdin=subprocess.PIPE , stdout=subprocess.PIPE)
+            if(command_passwd.returncode == 0):
+                newPass = str(input(command_passwd.stdout))
+                command_passwd.stdin.write(newPass)
+                self.color.pSuccess(command_passwd.stdout)
+                isRemediation = False
 
 
 if __name__ == "__main__":
