@@ -7,7 +7,8 @@
     },
     "INPUT": {
         "choise_benchmarck": "utiliser le Benchmarck par défault y/n: ",
-        "enter_number" : "Entre le numéro: "
+        "enter_number" : "Entre le numéro: ",
+        "restart_script": "Voulez-vous relancer le script: "
     },
     "ERROR": {
         "no_charge_sytem": "votre system  {} {} n'est pas pris en charge, contacter un des développeurs !",

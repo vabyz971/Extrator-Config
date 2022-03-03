@@ -58,7 +58,12 @@ class Application():
                 if(re.search(os_release.get('ID')+"_"+os_release.get('VERSION_ID'), f)):
                     subprocess.run(['python', f])
                 else:
-                    print("Votre system", platform.system(), platform.release() ,"na pas encore de CIS benchmarck ")
+                    print(str(self.i18n['ERROR']['no_benchmarck_system']).format(platform.system(), platform.release()))
+                    restart = str(input(str(self.i18n['INPUT']['restart_script'])))
+                    if restart == "y" or restart == "Y":
+                        self.DetectionSysteme()
+                    else:
+                        return
  
 
         elif choix == "n" or choix == "N":
@@ -80,6 +85,11 @@ class Application():
                     subprocess.Popen(['powershell',f])
                 else:
                     print(str(self.i18n['ERROR']['no_benchmarck_system']).format(platform.system(), platform.release()))
+                    restart = str(input(str(self.i18n['INPUT']['restart_script'])))
+                    if restart == "y" or restart == "Y":
+                        self.DetectionSysteme()
+                    else:
+                        return
 
         elif choix == "n" or choix == "N":
             for n, f in enumerate(self.filesOS):
