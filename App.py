@@ -56,7 +56,7 @@ class Application():
 
             for n, f in enumerate(self.filesOS):
                 if(re.search(os_release.get('ID')+"_"+os_release.get('VERSION_ID'), f)):
-                    subprocess.run(['python', f])
+                    subprocess.run(['python3', f])
                 else:
                     print(str(self.i18n['ERROR']['no_benchmarck_system']).format(platform.system(), platform.release()))
                     restart = str(input(str(self.i18n['INPUT']['restart_script'])))
@@ -71,7 +71,7 @@ class Application():
                 print(n, ":", f)
 
             choixBench = int(input("Entre le numero: "))
-            subprocess.run(['python', self.filesOS[choixBench]])
+            subprocess.run(['python3', self.filesOS[choixBench]])
 
     def WindowsDetecter(self):
         """Vérification du systeme windows détection"""

@@ -7,12 +7,12 @@
     },
     "INPUT": {
         "choise_benchmarck": "utiliser le Benchmarck par défault y/n: ",
-        "enter_number" : "Entre le numéro: ",
-        "restart_script": "Voulez-vous relancer le script: "
+        "enter_number": "Entre le numéro: ",
+        "restart_script": "Voulez-vous relancer le script y/n: "
     },
     "ERROR": {
         "no_charge_sytem": "votre system  {} {} n'est pas pris en charge, contacter un des développeurs !",
-        "no_benchmarck_system" : "Nous avons pas de CIS Benchmarck pour votre system {} {} ❌"
+        "no_benchmarck_system": "Nous avons pas de CIS Benchmarck pour votre system {} {} ❌"
     },
     "INDEX": {
         "SYSTEM": "system"
