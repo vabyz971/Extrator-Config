@@ -17,10 +17,6 @@ Grace à cela nous pouvons faire des audits sur les différends module de config
 
 Cloner le projet
 
-```bash
-  git clone https://github.com/vabyz971/Extrator-Config.git
-```
-
 Aller au répertoire du projet
 
 ```bash
@@ -33,9 +29,3 @@ Lancer l'application
 ```bash
   python App.py
 ```
-
-
-## Authors
-
-- [@vabyz971](https://www.github.com/vabyz971)
-

@@ -1,3 +1,7 @@
 {
-    "python.pythonPath": "venv/bin/python"
+    "python.pythonPath": "venv/bin/python",
+    "cSpell.words": [
+        "Popen"
+    ],
+    "python.formatting.provider": "autopep8"
 }

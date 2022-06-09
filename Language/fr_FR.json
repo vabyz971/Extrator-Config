@@ -1,0 +1,19 @@
+{
+    "app_exit": "Ctrl + C pour quitter",
+    "choise_benchmarck": "utiliser le Benchmarck par défault y/n: ",
+    "delete": "Suprimmer",
+    "detected": "Detecter",
+    "enter_number": "Entre le numéro: ",
+    "error" : "Erreur",
+    "info": "Info",
+    "success": "Success",
+    "no_charge_sytem": "Votre system  {} {} n'est pas pris en charge, contacter un des développeurs !",
+    "no_benchmarck_system": "Nous avons pas de CIS Benchmarck pour votre system {} {} ❌",
+    "start": "Extracteur de config serveur / workstation ",
+    "system": "System",
+    "system_detected": "System {} detecter",
+    "system_no_charge": "System non prise en charge",
+    "restart_script": "Voulez-vous relancer le script y/n: ",
+    "valide": "Valide",
+    "warning": "Attention"
+}

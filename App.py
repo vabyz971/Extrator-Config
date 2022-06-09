@@ -1,11 +1,3 @@
-# /**
-#  * @author [Jahleel Lacascade]
-#  * @email [j.lacascade@mail.com]
-#  * @create date 2021-06-18 10:37:22
-#  * @modify date 2021-06-18 10:37:22
-#  */
-
-
 
 import platform
 import os
@@ -13,27 +5,26 @@ import re
 import subprocess
 import locale
 
-from tools import Mylib
-import i18n
+from tools import libCreate
+from tools import Language
+from tools import HUDShell as HUD
 
 
 class Application():
 
     filesOS = []
-    i18n = i18n.returnLanguageSystem()
+    i18n = Language.langDetected()
 
     def Initialisation(self):
-
-        print("*"*5, self.i18n['START'] , "*"*5)
+        print(self.i18n['start'])
         self.DetectionSysteme()
 
     def DetectionSysteme(self):
         """Détection du system Host et lance le script approprier """
-
         self.ListFileSystemOS()
 
-        print("System  :", platform.system(), self.i18n['BASE']['detected'])
-        print("Language:", locale.getdefaultlocale()[0], self.i18n['BASE']['detected'])
+        print("System  :", platform.system(), self.i18n['detected'])
+        print("Language:", locale.getdefaultlocale()[0], self.i18n['detected'])
         
         if platform.system() == "Linux":
             self.LinuxDetecter()
@@ -42,7 +33,7 @@ class Application():
             self.WindowsDetecter()
 
         else:
-            print(str(self.i18n['ERROR']['no_charge_sytem']).format(platform.system(), platform.release()))
+            HUD.textColor(self.i18n['no_charge_sytem'].format(platform.system(), platform.release()), HUD.TypeMessage.WARNING)
             return False
 
     def LinuxDetecter(self):
@@ -52,16 +43,16 @@ class Application():
 
         if choix == "y" or choix == "Y":
             
-            os_release = dict(Mylib.read_os_releases())
+            os_release = dict(libCreate.read_os_releases())
 
             for n, f in enumerate(self.filesOS):
                 if(re.search(os_release.get('ID')+"_"+os_release.get('VERSION_ID'), f)):
                     subprocess.run(['python3', f])
                 else:
-                    print(str(self.i18n['ERROR']['no_benchmarck_system']).format(platform.system(), platform.release()))
-                    restart = str(input(str(self.i18n['INPUT']['restart_script'])))
+                    HUD.textColor(self.i18n['no_benchmarck_system'].format(platform.system(), platform.release()), HUD.TypeMessage.WARNING)
+                    restart = str(input(str(self.i18n['restart_script'])))
                     if restart == "y" or restart == "Y":
-                        self.DetectionSysteme()
+                        self.LinuxDetecter()
                     else:
                         return
  
@@ -76,7 +67,7 @@ class Application():
     def WindowsDetecter(self):
         """Vérification du systeme windows détection"""
         
-        choix = str(input(str(self.i18n['INPUT']['choise_benchmarck'])))
+        choix = str(input(str(self.i18n['choise_benchmarck'])))
 
         if choix == "y" or choix == "Y":
             
@@ -84,8 +75,8 @@ class Application():
                 if(re.search(platform.win32_ver()[0], f)):
                     subprocess.Popen(['powershell',f])
                 else:
-                    print(str(self.i18n['ERROR']['no_benchmarck_system']).format(platform.system(), platform.release()))
-                    restart = str(input(str(self.i18n['INPUT']['restart_script'])))
+                    HUD.textColor(self.i18n['no_benchmarck_system'].format(platform.system(), platform.release()), HUD.TypeMessage.WARNING)
+                    restart = str(input(str(self.i18n['restart_script'])))
                     if restart == "y" or restart == "Y":
                         self.DetectionSysteme()
                     else:
@@ -95,19 +86,18 @@ class Application():
             for n, f in enumerate(self.filesOS):
                 print(n, ":", f)
 
-            choixBench = int(input(self.i18n['INPUT']['enter_number']))
+            choixBench = int(input(self.i18n['enter_number']))
             subprocess.Popen(['powershell', self.filesOS[choixBench]])
 
     def ListFileSystemOS(self):
         """Liste tout le repertoire lier a la platform (Linux/ Windows)
-        dans le dossier ./CIS
 
         Returns:
             [Array]: [Tableau de type str] chemin absolute des fichiers
         """
-
-        for path in os.listdir(os.path.join('CIS', platform.system())):
-            full_path = os.path.join('CIS', platform.system(), path)
+        self.filesOS = []
+        for path in os.listdir(os.path.join(platform.system())):
+            full_path = os.path.join(platform.system(), path)
             if os.path.isfile(full_path):
                 self.filesOS.append(full_path)
 

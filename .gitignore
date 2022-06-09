@@ -24,6 +24,7 @@ package-lock.json
 
 AuditGenerate/*
 CIS/Windows/output/*
+Logs/*
 #Config IDE
 .vscode
 .idea

@@ -107,4 +107,4 @@ if __name__ == "__main__":
 
 
     # Output generator file PDF
-    pdf.output(os.path.join('..', '..', 'AuditGenerate', 'Audit.pdf'))
+    pdf.output(os.path.join('..', 'AuditGenerate', 'Audit.pdf'))

@@ -1,8 +1,7 @@
 
 
 import ast
-import re, sys
-
+import re, sys, os
 
 def read_os_releases():
     """ Recupere les infos du system linux dans le fichier os_release
@@ -26,3 +25,13 @@ def read_os_releases():
         else:
             print(f'{filename}:{line_number + 1}: bad line {line!r}',
                     file=sys.stderr)
+
+
+def listDir(dir):
+    fileFolders = []
+
+    fileNames = os.listdir(dir)
+    for fileName in fileNames:
+        fileFolders.append({ "name":fileName, "path" :os.path.abspath(os.path.join(dir, fileName))})
+
+    return fileFolders
